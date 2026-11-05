@@ -1,0 +1,15 @@
+# Runtime files and credentials
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Private property runs and generated reports
+/casorama/
+/originals/
+/concepts/
+/relatorio*.html
+/report-data*.json
+/manifest.json
