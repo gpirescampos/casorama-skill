@@ -25,8 +25,6 @@ The report builder requires Python 3 and uses only the standard library. It embe
 
 Property runs, downloaded photos, generated concepts, manifests and reports can contain personal information or copyrighted material. A standalone report embeds the photographs: sharing the HTML also shares its images. Keep generated property folders out of a public repository, and review usage rights and privacy before sharing.
 
-The report template includes a link to `https://casorama.pt`. The site may not be available. The project and skill do not automatically publish reports.
-
 ## License
 
 MIT; see [LICENSE](LICENSE).
