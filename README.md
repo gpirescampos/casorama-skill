@@ -19,7 +19,9 @@ Invoke `$casorama` in a supporting agent, followed by a property listing URL or 
 
 An image editor capable of editing a supplied photo is required to generate concepts. A tool that can also accept a separate reference image improves cross-view consistency. Access to listing photos depends on the website and the platform's browser or connector capabilities. If those tools are unavailable, the skill explains the limitation and can prepare prompts instead. Availability, costs and permissions depend on the host; no particular model or provider is bundled.
 
-The report builder requires Python 3 and uses only the standard library. It embeds images in the HTML, so the finished report opens offline. Its manifest format and command are described in the skill instructions. Platforms without Python or a persistent filesystem need their own supported file-creation workflow.
+Installing the package as a private plugin changes who can access it; it does not add image-editing, filesystem, Python, or artifact tools. The host must expose those capabilities, and plugin-bundled files may not have a local filesystem path. The skill should confirm actual access before claiming that it edited images or reused the report template.
+
+The report builder requires Python 3 and access to the bundled template and uses only the standard library. It embeds images in the HTML, so the finished report opens offline. Its manifest format and command are described in the skill instructions. If a host cannot access the template or run the builder, it should not claim to have used the intended report design or substitute another format.
 
 ## Privacy and sharing
 
