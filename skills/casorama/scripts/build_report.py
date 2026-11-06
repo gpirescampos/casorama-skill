@@ -27,7 +27,8 @@ def main():
     if args.output.exists() and not args.overwrite: ap.error('Output already exists; choose a new name or explicitly use --overwrite')
     data=json.loads(args.manifest.read_text(encoding='utf-8'))
     items=data.get('comparisons',[])
-    if not items: ap.error('Manifest must contain at least one comparison')
+    attempts=data.get('unverified_attempts',[])
+    if not items and not attempts: ap.error('Manifest must contain comparisons or unverified_attempts')
     sections=[]
     for i,item in enumerate(items,1):
         original=image_url(item['original'],args.manifest.parent); concept=image_url(item['concept'],args.manifest.parent)
@@ -44,7 +45,16 @@ def main():
         hint='<p class="hint">Arrasta ou usa as teclas de direção para comparar.</p>'
         extra=f'<p class="notice">{note}</p>' if note else ''
         sections.append(f'''<section class="room"><div class="room-head"><div><span class="number">{i:02d} / {room}</span><h2>{title}</h2></div><span class="caption">COMPARA AS IMAGENS ↔</span></div>{compare}{hint}<div class="room-copy"><h3>{subtitle}</h3><div><p>{description}</p>{extra}</div></div></section>''')
-    values={'LANG':esc(data.get('lang','pt-PT')),'TITLE':esc(data.get('title','Casorama — Relatório')),'HEADER_LABEL':esc(data.get('header_label','Relatório do imóvel')),'INTRO':f'<p class="report-note">{esc(data.get("intro",""))}</p>' if data.get('intro') else '', 'SECTIONS':'\n'.join(sections),'CLOSING_TITLE':esc(data.get('closing_title','Uma ideia para começar.')),'DISCLAIMER':esc(data.get('disclaimer','Estas imagens são ilustrativas e podem alterar detalhes do espaço. Não são medições, projetos de arquitetura ou uma garantia de viabilidade de obras.'))}
+    attempt_sections=[]
+    if attempts:
+        cards=[]
+        for item in attempts:
+            image=image_url(item['image'],args.manifest.parent)
+            room=esc(item['room']); description=esc(item['description'])
+            alt=esc(item.get('alt',f'Tentativa de geração não verificada: {item["room"]}'))
+            cards.append(f'<article class="attempt-card"><h3>{room} · Tentativa não verificada</h3><img src="{image}" alt="{alt}"><p>{description}</p></article>')
+        attempt_sections.append(f'<section class="attempts"><h2>Tentativas de geração não verificadas</h2><p class="attempts-intro">Estas imagens mostram resultados gerados que não puderam ser confirmados como transformações fiéis de uma divisão. Não são comparações antes/depois.</p><div class="attempt-grid">{"".join(cards)}</div></section>')
+    values={'LANG':esc(data.get('lang','pt-PT')),'TITLE':esc(data.get('title','Casorama — Relatório')),'HEADER_LABEL':esc(data.get('header_label','Relatório do imóvel')),'INTRO':f'<p class="report-note">{esc(data.get("intro",""))}</p>' if data.get('intro') else '', 'SECTIONS':'\n'.join(sections),'ATTEMPTS':'\n'.join(attempt_sections),'CLOSING_TITLE':esc(data.get('closing_title','Uma ideia para começar.')),'DISCLAIMER':esc(data.get('disclaimer','Estas imagens são ilustrative e podem alterar detalhes do espaço. Não são medições, projetos de arquitetura ou uma garantia de viabilidade de obras.'))}
     result=TEMPLATE.read_text(encoding='utf-8')
     for k,v in values.items(): result=result.replace('{{'+k+'}}',v)
     args.output.write_text(result,encoding='utf-8')
